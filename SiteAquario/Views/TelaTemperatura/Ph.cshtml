@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Histórico de pH</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+
+<body>
+    <h2>Histórico de pH</h2>
+    <canvas id="phChart" width="400" height="200"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            var response = await fetch('/ValoresSensor/PhHistorico');
+            var data = await response.json();
+
+            var ctx = document.getElementById('phChart').getContext('2d');
+            var phChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(entry => new Date(entry.dataCadastro)),
+                    datasets: [{
+                        label: 'pH',
+                        data: data.map(entry => entry.ph),
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'pH'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
